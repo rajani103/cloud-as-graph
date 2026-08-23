@@ -1,0 +1,241 @@
+{
+  "_comment": "Seed data for the cloud-as-graph demo. Shaped like a real Cloud Asset Inventory export: 'resources' mirrors what `gcloud asset search-all-resources` returns (Asset objects with resource.data), and 'iam_policies' mirrors `gcloud asset search-all-iam-policies` (resource + policy.bindings). This file is 100% local, hand-authored, and is the ONLY input the demo reads. See README.md for the real (never-executed) export commands this shape is based on.",
+
+  "resources": [
+    {
+      "name": "//cloudresourcemanager.googleapis.com/projects/cloud-as-graph-demo",
+      "assetType": "cloudresourcemanager.googleapis.com/Project",
+      "resource": {
+        "data": {
+          "name": "project-demo",
+          "projectId": "cloud-as-graph-demo",
+          "projectNumber": "123456789012",
+          "lifecycleState": "ACTIVE"
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-public",
+      "assetType": "compute.googleapis.com/Subnetwork",
+      "resource": {
+        "data": {
+          "name": "subnet-public",
+          "ipCidrRange": "10.0.1.0/24",
+          "region": "us-central1"
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-private",
+      "assetType": "compute.googleapis.com/Subnetwork",
+      "resource": {
+        "data": {
+          "name": "subnet-private",
+          "ipCidrRange": "10.0.2.0/24",
+          "region": "us-central1"
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/global/firewalls/fw-allow-ssh-bastion",
+      "assetType": "compute.googleapis.com/Firewall",
+      "resource": {
+        "data": {
+          "name": "fw-allow-ssh-bastion",
+          "direction": "INGRESS",
+          "sourceRanges": ["0.0.0.0/0"],
+          "allowed": [{"IPProtocol": "tcp", "ports": ["22"]}],
+          "targetTags": ["bastion"]
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/global/firewalls/fw-allow-internal",
+      "assetType": "compute.googleapis.com/Firewall",
+      "resource": {
+        "data": {
+          "name": "fw-allow-internal",
+          "direction": "INGRESS",
+          "sourceRanges": ["10.0.0.0/8"],
+          "allowed": [{"IPProtocol": "tcp", "ports": ["0-65535"]}],
+          "targetTags": ["internal"]
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/zones/us-central1-a/instances/vm-bastion",
+      "assetType": "compute.googleapis.com/Instance",
+      "resource": {
+        "data": {
+          "name": "vm-bastion",
+          "tags": {"items": ["bastion"]},
+          "serviceAccounts": [
+            {"email": "sa-bastion@cloud-as-graph-demo.iam.gserviceaccount.com", "scopes": ["https://www.googleapis.com/auth/cloud-platform"]}
+          ],
+          "networkInterfaces": [
+            {
+              "subnetwork": "projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-public",
+              "accessConfigs": [{"type": "ONE_TO_ONE_NAT", "natIP": "34.123.45.6"}]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/zones/us-central1-a/instances/vm-internal-app",
+      "assetType": "compute.googleapis.com/Instance",
+      "resource": {
+        "data": {
+          "name": "vm-internal-app",
+          "tags": {"items": ["internal"]},
+          "serviceAccounts": [
+            {"email": "sa-default@cloud-as-graph-demo.iam.gserviceaccount.com", "scopes": ["https://www.googleapis.com/auth/cloud-platform"]}
+          ],
+          "networkInterfaces": [
+            {"subnetwork": "projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-private"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/zones/us-central1-a/instances/vm-internal-db",
+      "assetType": "compute.googleapis.com/Instance",
+      "resource": {
+        "data": {
+          "name": "vm-internal-db",
+          "tags": {"items": ["internal"]},
+          "serviceAccounts": [
+            {"email": "sa-default@cloud-as-graph-demo.iam.gserviceaccount.com", "scopes": ["https://www.googleapis.com/auth/cloud-platform"]}
+          ],
+          "networkInterfaces": [
+            {"subnetwork": "projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-private"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "//compute.googleapis.com/projects/cloud-as-graph-demo/zones/us-central1-a/instances/vm-worker",
+      "assetType": "compute.googleapis.com/Instance",
+      "resource": {
+        "data": {
+          "name": "vm-worker",
+          "tags": {"items": ["internal"]},
+          "serviceAccounts": [
+            {"email": "sa-default@cloud-as-graph-demo.iam.gserviceaccount.com", "scopes": ["https://www.googleapis.com/auth/cloud-platform"]}
+          ],
+          "networkInterfaces": [
+            {"subnetwork": "projects/cloud-as-graph-demo/regions/us-central1/subnetworks/subnet-private"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "//iam.googleapis.com/projects/cloud-as-graph-demo/serviceAccounts/sa-bastion@cloud-as-graph-demo.iam.gserviceaccount.com",
+      "assetType": "iam.googleapis.com/ServiceAccount",
+      "resource": {
+        "data": {
+          "email": "sa-bastion@cloud-as-graph-demo.iam.gserviceaccount.com",
+          "displayName": "sa-bastion",
+          "uniqueId": "100000000000000000001"
+        }
+      }
+    },
+    {
+      "name": "//iam.googleapis.com/projects/cloud-as-graph-demo/serviceAccounts/sa-deployer@cloud-as-graph-demo.iam.gserviceaccount.com",
+      "assetType": "iam.googleapis.com/ServiceAccount",
+      "resource": {
+        "data": {
+          "email": "sa-deployer@cloud-as-graph-demo.iam.gserviceaccount.com",
+          "displayName": "sa-deployer",
+          "uniqueId": "100000000000000000002"
+        }
+      }
+    },
+    {
+      "name": "//iam.googleapis.com/projects/cloud-as-graph-demo/serviceAccounts/sa-default@cloud-as-graph-demo.iam.gserviceaccount.com",
+      "assetType": "iam.googleapis.com/ServiceAccount",
+      "resource": {
+        "data": {
+          "email": "sa-default@cloud-as-graph-demo.iam.gserviceaccount.com",
+          "displayName": "sa-default",
+          "uniqueId": "100000000000000000003"
+        }
+      }
+    },
+    {
+      "name": "//storage.googleapis.com/bucket-crownjewels",
+      "assetType": "storage.googleapis.com/Bucket",
+      "resource": {
+        "data": {
+          "name": "bucket-crownjewels",
+          "location": "US",
+          "storageClass": "STANDARD",
+          "labels": {"sensitive": "true"}
+        }
+      }
+    },
+    {
+      "name": "//storage.googleapis.com/bucket-public-assets",
+      "assetType": "storage.googleapis.com/Bucket",
+      "resource": {
+        "data": {
+          "name": "bucket-public-assets",
+          "location": "US",
+          "storageClass": "STANDARD",
+          "labels": {"purpose": "static-assets"}
+        }
+      }
+    },
+    {
+      "name": "//storage.googleapis.com/bucket-logs",
+      "assetType": "storage.googleapis.com/Bucket",
+      "resource": {
+        "data": {
+          "name": "bucket-logs",
+          "location": "US",
+          "storageClass": "STANDARD",
+          "labels": {"purpose": "logs"}
+        }
+      }
+    }
+  ],
+
+  "iam_policies": [
+    {
+      "resource": "//iam.googleapis.com/projects/cloud-as-graph-demo/serviceAccounts/sa-deployer@cloud-as-graph-demo.iam.gserviceaccount.com",
+      "assetType": "iam.googleapis.com/ServiceAccount",
+      "policy": {
+        "bindings": [
+          {
+            "role": "roles/iam.serviceAccountTokenCreator",
+            "members": ["serviceAccount:sa-bastion@cloud-as-graph-demo.iam.gserviceaccount.com"]
+          }
+        ]
+      }
+    },
+    {
+      "resource": "//storage.googleapis.com/bucket-crownjewels",
+      "assetType": "storage.googleapis.com/Bucket",
+      "policy": {
+        "bindings": [
+          {
+            "role": "roles/storage.admin",
+            "members": ["serviceAccount:sa-deployer@cloud-as-graph-demo.iam.gserviceaccount.com"]
+          }
+        ]
+      }
+    },
+    {
+      "resource": "//storage.googleapis.com/bucket-logs",
+      "assetType": "storage.googleapis.com/Bucket",
+      "policy": {
+        "bindings": [
+          {
+            "role": "roles/storage.objectViewer",
+            "members": ["serviceAccount:sa-default@cloud-as-graph-demo.iam.gserviceaccount.com"]
+          }
+        ]
+      }
+    }
+  ]
+}
